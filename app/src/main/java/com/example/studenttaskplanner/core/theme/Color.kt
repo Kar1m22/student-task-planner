@@ -1,0 +1,41 @@
+package com.example.studenttaskplanner.core.theme
+
+import androidx.compose.ui.graphics.Color
+
+// Light palette: pale background, white cards, dark readable text.
+val LightPrimary = Color(0xFF2457C5)
+val LightOnPrimary = Color(0xFFFFFFFF)
+val LightPrimaryContainer = Color(0xFFEAF0FF)
+val LightOnPrimaryContainer = Color(0xFF173C86)
+val LightBackground = Color(0xFFF7F9FC)
+val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceVariant = Color(0xFFEDF1F7)
+val LightText = Color(0xFF182230)
+val LightSecondaryText = Color(0xFF526174)
+val LightOutline = Color(0xFF738194)
+val LightDivider = Color(0xFFDCE3EB)
+val LightError = Color(0xFFB3261E)
+val LightErrorContainer = Color(0xFFFCE8E6)
+val LightOnErrorContainer = Color(0xFF410E0B)
+val LightSuccess = Color(0xFF246B45)
+val LightSuccessContainer = Color(0xFFE5F3EA)
+val LightOnSuccessContainer = Color(0xFF103B25)
+
+// Dark palette: unchanged from the agreed design.
+val DarkPrimary = Color(0xFFADC6FF)
+val DarkOnPrimary = Color(0xFF102D66)
+val DarkPrimaryContainer = Color(0xFF263D62)
+val DarkOnPrimaryContainer = Color(0xFFDCE7FF)
+val DarkBackground = Color(0xFF111820)
+val DarkSurface = Color(0xFF1B2530)
+val DarkSurfaceVariant = Color(0xFF263340)
+val DarkText = Color(0xFFE7EEF5)
+val DarkSecondaryText = Color(0xFFB6C3D1)
+val DarkOutline = Color(0xFF8A99AA)
+val DarkDivider = Color(0xFF394957)
+val DarkError = Color(0xFFFFB4AB)
+val DarkErrorContainer = Color(0xFF601410)
+val DarkOnErrorContainer = Color(0xFFFFDAD6)
+val DarkSuccess = Color(0xFF8DD7A9)
+val DarkSuccessContainer = Color(0xFF153D29)
+val DarkOnSuccessContainer = Color(0xFFB8F0CC)
