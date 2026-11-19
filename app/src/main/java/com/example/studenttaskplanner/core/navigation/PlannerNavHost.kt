@@ -38,6 +38,12 @@ fun PlannerNavHost() {
                 taskId = null,
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onTaskDeleted = {
+                    navController.popBackStack(
+                        PlannerDestination.TASK_LIST,
+                        inclusive = false
+                    )
                 }
             )
         }
@@ -57,6 +63,12 @@ fun PlannerNavHost() {
                 taskId = taskId,
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onTaskDeleted = {
+                    navController.popBackStack(
+                        PlannerDestination.TASK_LIST,
+                        inclusive = false
+                    )
                 }
             )
         }

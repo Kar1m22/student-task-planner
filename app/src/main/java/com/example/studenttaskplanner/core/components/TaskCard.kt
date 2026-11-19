@@ -1,4 +1,5 @@
 package com.example.studenttaskplanner.core.components
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,10 +20,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.studenttaskplanner.core.theme.PlannerTheme
 import com.example.studenttaskplanner.data.local.TaskEntity
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import com.example.studenttaskplanner.core.tasks.TaskStatus
+import com.example.studenttaskplanner.core.tasks.formatTaskDeadline
+import com.example.studenttaskplanner.core.tasks.status
 
 
 @Composable
@@ -32,29 +32,22 @@ fun TaskCard(
     onCompletionChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isOverdue = !task.isCompleted &&
-            task.dueAtEpochMillis < System.currentTimeMillis()
+    val taskStatus = task.status()
 
-    val deadlineText = Instant
-        .ofEpochMilli(task.dueAtEpochMillis)
-        .atZone(ZoneId.systemDefault())
-        .format(
-            DateTimeFormatter.ofPattern(
-                "MMM d, h:mm a",
-                Locale.getDefault()
-            )
-        )
+    val deadlineText = formatTaskDeadline(
+        dueAtEpochMillis = task.dueAtEpochMillis
+    )
 
-    val statusColor = when {
-        task.isCompleted -> PlannerTheme.statusColors.completed
-        isOverdue -> PlannerTheme.statusColors.overdue
-        else -> MaterialTheme.colorScheme.primary
+    val statusColor = when (taskStatus) {
+        TaskStatus.COMPLETED -> PlannerTheme.statusColors.completed
+        TaskStatus.OVERDUE -> PlannerTheme.statusColors.overdue
+        TaskStatus.PENDING -> MaterialTheme.colorScheme.primary
     }
 
-    val statusText = when {
-        task.isCompleted -> "✓ Completed"
-        isOverdue -> "Overdue · $deadlineText"
-        else -> deadlineText
+    val statusText = when (taskStatus) {
+        TaskStatus.COMPLETED -> "✓ Completed"
+        TaskStatus.OVERDUE -> "Overdue · $deadlineText"
+        TaskStatus.PENDING -> deadlineText
     }
 
     Card(
