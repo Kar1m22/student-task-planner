@@ -10,6 +10,7 @@ import com.example.studenttaskplanner.data.repository.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,33 @@ class TaskFormViewModel(
         )
     )
     val uiState: StateFlow<TaskFormUiState> = _uiState.asStateFlow()
+
+    init {
+        if (taskId != null && taskId != 0L) {
+            loadExistingTask(taskId)
+        }
+    }
+
+    private fun loadExistingTask(id: Long) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            val existingTask = taskRepository.observeTaskById(id).firstOrNull()
+            if (existingTask != null) {
+                _uiState.update {
+                    it.copy(
+                        title = existingTask.title,
+                        course = existingTask.course,
+                        description = existingTask.description,
+                        dueAtEpochMillis = existingTask.dueAtEpochMillis,
+                        isCompleted = existingTask.isCompleted,
+                        isLoading = false
+                    )
+                }
+            } else {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
 
     fun onTitleChange(newTitle: String) {
         _uiState.update {
@@ -64,7 +92,23 @@ class TaskFormViewModel(
             return
         }
 
-        onSuccess()
+        viewModelScope.launch {
+            val taskToSave = TaskEntity(
+                id = taskId ?: 0L,
+                title = currentState.title.trim(),
+                course = currentState.course.trim(),
+                description = currentState.description.trim(),
+                dueAtEpochMillis = currentState.dueAtEpochMillis,
+                isCompleted = currentState.isCompleted
+            )
+
+            if (taskId == null || taskId == 0L) {
+                taskRepository.addTask(taskToSave)
+            } else {
+                taskRepository.updateTask(taskToSave)
+            }
+            onSuccess()
+        }
     }
 
     companion object {
