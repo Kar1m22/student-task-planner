@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.studenttaskplanner.data.local.TaskEntity
 import com.example.studenttaskplanner.data.repository.TaskRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +23,7 @@ data class TaskFormUiState(
     val isCompleted: Boolean = false,
     val showTitleError: Boolean = false,
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val isEditing: Boolean = false
 )
 
@@ -60,6 +62,40 @@ class TaskFormViewModel(
                 }
             } else {
                 _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun refreshForm() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            // Waiting state (simulating async refresh)
+            delay(1000L)
+
+            if (taskId != null && taskId != 0L) {
+                val existingTask = taskRepository.observeTaskById(taskId).firstOrNull()
+                if (existingTask != null) {
+                    _uiState.update {
+                        it.copy(
+                            title = existingTask.title,
+                            course = existingTask.course,
+                            description = existingTask.description,
+                            dueAtEpochMillis = existingTask.dueAtEpochMillis,
+                            isRefreshing = false
+                        )
+                    }
+                } else {
+                    _uiState.update { it.copy(isRefreshing = false) }
+                }
+            } else {
+                // Refresh date and time to current system time + 24 hours
+                val updatedDeadline = System.currentTimeMillis() + 86_400_000L
+                _uiState.update {
+                    it.copy(
+                        dueAtEpochMillis = updatedDeadline,
+                        isRefreshing = false
+                    )
+                }
             }
         }
     }
@@ -107,6 +143,23 @@ class TaskFormViewModel(
             } else {
                 taskRepository.updateTask(taskToSave)
             }
+            onSuccess()
+        }
+    }
+
+    fun deleteTask(onSuccess: () -> Unit) {
+        if (taskId == null || taskId == 0L) return
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            val taskToDelete = TaskEntity(
+                id = taskId,
+                title = currentState.title,
+                course = currentState.course,
+                description = currentState.description,
+                dueAtEpochMillis = currentState.dueAtEpochMillis,
+                isCompleted = currentState.isCompleted
+            )
+            taskRepository.deleteTask(taskToDelete)
             onSuccess()
         }
     }
