@@ -63,5 +63,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.material.icons.extended)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.androidx.compose.ui.viewbinding)
+
 
 }
