@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -131,6 +132,10 @@ private fun TaskDetailsContent(
         TaskStatus.OVERDUE -> PlannerTheme.statusColors.overdue
         TaskStatus.PENDING -> MaterialTheme.colorScheme.primary
     }
+
+    val panelBackgroundColor =
+        MaterialTheme.colorScheme.surface.toArgb()
+
     val supportingTextColor =
         MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
 
@@ -149,14 +154,15 @@ private fun TaskDetailsContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(horizontal = 24.dp)
     ) {
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(
             onClick = onNavigateBack
         ) {
-            Text("← Back")
+            Text(" <- Back")
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -179,6 +185,8 @@ private fun TaskDetailsContent(
                 factory = ViewTaskInfoBinding::inflate,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                root.setBackgroundColor(panelBackgroundColor)
+
                 courseValue.text = task.course.ifBlank {
                     "No course"
                 }

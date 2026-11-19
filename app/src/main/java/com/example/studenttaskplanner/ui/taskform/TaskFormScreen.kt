@@ -60,7 +60,8 @@ import java.util.Locale
 @Composable
 fun TaskFormScreen(
     taskId: Long?,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onTaskDeleted: () -> Unit
 ) {
     val context = LocalContext.current
     val application = context.applicationContext as PlannerApplication
@@ -98,7 +99,7 @@ fun TaskFormScreen(
                 Button(
                     onClick = {
                         showDeleteConfirmationDialog = false
-                        viewModel.deleteTask(onSuccess = onNavigateBack)
+                        viewModel.deleteTask(onSuccess = onTaskDeleted)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error,
